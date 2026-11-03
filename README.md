@@ -1,5 +1,5 @@
-# Cookie:Ro main page concept
+# Cookie:Ro landing page prototype
 
-Open `index.html` locally to preview. The first screen shows a blank open photobook with travel snapshots scattered around it. After three seconds, tap the Cookie:Ro paw cookie in the center; the photos swirl into the cookie and then settle into the book.
+Open `index.html` locally to preview. After three seconds, the Cookie:Ro cookie appears. Tap it to pull the scattered travel photos into the photobook. When the book opens, use the left and right halves to browse the four spreads from the supplied Crumbook design. Turn past the last spread to close the book and reveal the “나만의 Crumbook 만들러 가기” button. It scrolls to the Cookie:Ro flow guide below.
 
-For GitHub, upload `index.html` and the complete `assets` folder to the repository root. Keep the folder name `assets` so image links continue to work. No build command is needed for GitHub Pages or other static hosting.
+For GitHub Pages, upload `index.html`, `README.md`, and the complete `assets` folder to the repository root. Keep the folder name `assets` so image links continue to work. This is a static site and needs no build command.
