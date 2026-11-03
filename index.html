@@ -41,19 +41,20 @@ button{font:inherit;color:inherit}
 .cookie-hint::before{content:"";position:absolute;left:50%;top:-5px;width:9px;height:9px;background:var(--cherry);transform:translateX(-50%) rotate(45deg)}
 .sucking .cookie-hint{opacity:0}
 .sucking .memory{left:50%;top:51%;opacity:0;filter:blur(1.5px);transform:translate(-50%,-50%) scale(.025) rotate(720deg);transition-duration:800ms;}
-.arranged .memory{left:var(--fx);top:var(--fy);opacity:1;filter:none;transform:translate(-50%,-50%);}
-.arranged .cookie-wrap{opacity:0;visibility:hidden;transition-duration:300ms}
+.sucking .cookie-wrap{transform:translate(-50%,-50%) scale(.92);transition-duration:500ms}
+.cover-ready .memory,.opening .memory,.reading .memory,.book-closed .memory{opacity:0!important;visibility:hidden;pointer-events:none}
+.cover-ready .cookie-wrap,.opening .cookie-wrap,.reading .cookie-wrap,.book-closed .cookie-wrap{opacity:0;visibility:hidden;transition-duration:250ms}
 .replay{position:absolute;z-index:15;right:clamp(20px,4vw,60px);bottom:clamp(18px,3vh,36px);border:1px solid rgba(86,52,42,.45);background:rgba(255,253,248,.8);padding:9px 13px;border-radius:2px;font-size:10px;letter-spacing:.06em;cursor:pointer;opacity:0;visibility:hidden;transition:opacity 300ms ease,background .2s ease}
 .replay:hover{background:#fffefa}
-.arranged .replay{opacity:1;visibility:visible}
+.arranged .replay{opacity:0;visibility:hidden}
 .status{position:absolute;z-index:14;left:50%;bottom:clamp(18px,3vh,36px);transform:translateX(-50%);font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(86,52,42,.72);opacity:0;transition:opacity .4s ease}
 .arranged .status{opacity:1}
-.reader{position:absolute;z-index:8;left:50%;top:51%;width:min(88vw,1050px);aspect-ratio:1.52/1;transform:translate(-50%,-50%);perspective:1800px;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
-.reading .reader,.book-closed .reader{opacity:1;visibility:visible}
+.reader{position:absolute;z-index:8;left:50%;top:51%;width:min(78vw,900px,calc((100svh - 260px)*1.52));aspect-ratio:1.52/1;transform:translate(-50%,-50%);perspective:1800px;opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s;}
+.cover-ready .reader,.opening .reader,.reading .reader,.book-closed .reader{opacity:1;visibility:visible}
 .reading .replay,.book-closed .replay{opacity:0;visibility:hidden}
-.reading .book,.book-closed .book{opacity:0;visibility:hidden}
-.reading .memory,.book-closed .memory{opacity:0!important;visibility:hidden;pointer-events:none}
-.reading .status,.book-closed .status{opacity:0}
+.cover-ready .book,.opening .book,.reading .book,.closing .book,.book-closed .book{opacity:0;visibility:hidden}
+.reading .status,.cover-ready .status,.opening .status,.closing .status,.book-closed .status{opacity:0}
+.closing .memory,.closing .cookie-wrap{opacity:0!important;visibility:hidden;pointer-events:none}
 .spread{position:absolute;inset:0;display:flex;background:#fffdf8;border-radius:5px 8px 8px 5px;box-shadow:0 22px 45px rgba(86,52,42,.24),0 3px 8px rgba(86,52,42,.18);overflow:hidden}
 .spread img{width:50%;height:100%;display:block;object-fit:cover;user-select:none;-webkit-user-drag:none}
 .spread img:first-child{border-right:1px solid rgba(86,52,42,.14)}
@@ -64,15 +65,34 @@ button{font:inherit;color:inherit}
 .page-hit.left::after{left:18px}.page-hit.right::after{right:18px}
 .page-hit:hover::after,.page-hit:focus-visible::after{opacity:1}
 .page-hit:focus-visible{outline:2px solid var(--cherry);outline-offset:-5px}
-.leaf{position:absolute;z-index:3;top:0;bottom:0;width:50%;background:#fffdf8;transform-style:preserve-3d;pointer-events:none;box-shadow:0 0 16px rgba(86,52,42,.15);opacity:0}
-.leaf img{width:100%;height:100%;object-fit:cover;display:block;backface-visibility:hidden}
+.leaf{position:absolute;z-index:3;top:0;bottom:0;width:50%;background:#fffdf8;transform-style:preserve-3d;pointer-events:none;box-shadow:0 0 18px rgba(55,35,25,.26);opacity:0;will-change:transform}
+.leaf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.leaf img.back{transform:rotateY(180deg)}
 .leaf.next{right:0;transform-origin:left center;transform:rotateY(0)}.leaf.prev{left:0;transform-origin:right center;transform:rotateY(0)}
-.turning .leaf{opacity:1;transition:transform .58s cubic-bezier(.2,.72,.18,1)}
+.leaf.next::after,.leaf.prev::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .72s ease}
+.leaf.next::after{background:linear-gradient(90deg,rgba(52,35,24,.28),transparent 28%,rgba(255,255,255,.08) 72%,rgba(57,36,23,.18))}
+.leaf.prev::after{background:linear-gradient(270deg,rgba(52,35,24,.28),transparent 28%,rgba(255,255,255,.08) 72%,rgba(57,36,23,.18))}
+.turning .leaf{opacity:1;transition:transform .82s cubic-bezier(.48,.06,.22,1)}
+.turning .leaf::after{opacity:.75}
 .turning.forward .leaf.next{transform:rotateY(-180deg)}.turning.backward .leaf.prev{transform:rotateY(180deg)}
 .reader-count{position:absolute;z-index:5;left:50%;bottom:-30px;transform:translateX(-50%);font-size:10px;letter-spacing:.12em;color:rgba(86,52,42,.65);white-space:nowrap}
 .cover{position:absolute;z-index:6;inset:0;display:none;place-items:center;cursor:pointer}
-.cover img{height:min(76vh,670px);width:auto;max-width:76vw;object-fit:contain;border-radius:4px;box-shadow:0 20px 42px rgba(86,52,42,.3);user-select:none}
-.book-closed .cover{display:grid}
+.cover img{position:relative;z-index:1;height:min(68vh,570px);width:auto;max-width:66vw;object-fit:contain;border-radius:4px;box-shadow:0 20px 42px rgba(86,52,42,.3);user-select:none;transform-origin:left center;backface-visibility:hidden}
+.cover-ready .cover,.opening .cover,.closing .cover,.book-closed .cover{display:grid}
+.cover::before{content:"";position:absolute;width:min(58vw,610px);height:min(73vh,640px);border-radius:50%;background:radial-gradient(ellipse,rgba(246,157,81,.42),rgba(246,190,113,.17) 38%,transparent 70%);filter:blur(18px);opacity:0;transform:scale(.72)}
+.cover-ready .cover::before{animation:oven-glow 1.65s ease-out both}
+.cover-ready .cover img{animation:bake-in 1.25s cubic-bezier(.2,.82,.2,1) both}
+.opening .cover img{animation:none;transition:transform .82s cubic-bezier(.48,.06,.22,1),opacity .75s ease;transform:rotateY(-165deg);opacity:.42}
+.closing .cover img{animation:close-book .82s cubic-bezier(.48,.06,.22,1) both}
+.steam{position:absolute;z-index:2;top:calc(50% - min(34vh,285px) - 26px);left:50%;display:flex;gap:26px;transform:translateX(-50%);opacity:0;pointer-events:none}
+.cover-ready .steam{animation:steam-out 1.8s ease-out both}
+.steam i{display:block;width:10px;height:48px;border-radius:50%;background:rgba(255,250,224,.82);filter:blur(7px);animation:steam-rise 1.65s ease-out infinite}
+.steam i:nth-child(2){height:58px;animation-delay:.18s}.steam i:nth-child(3){height:43px;animation-delay:.34s}
+@keyframes bake-in{0%{opacity:0;transform:translateY(34px) scale(.84) rotateX(9deg);filter:brightness(1.38) sepia(.18) drop-shadow(0 0 25px rgba(241,147,70,.7))}55%{opacity:1;transform:translateY(-4px) scale(1.025) rotateX(0);filter:brightness(1.13) sepia(.08) drop-shadow(0 0 25px rgba(241,147,70,.48))}100%{opacity:1;transform:translateY(0) scale(1) rotateX(0);filter:brightness(1) drop-shadow(0 18px 33px rgba(86,52,42,.24))}}
+@keyframes oven-glow{0%{opacity:0;transform:scale(.72)}40%{opacity:1;transform:scale(1.06)}100%{opacity:.5;transform:scale(1)}}
+@keyframes steam-rise{0%{opacity:0;transform:translateY(13px) scaleX(.72)}35%{opacity:.78}100%{opacity:0;transform:translateY(-31px) scaleX(1.2)}}
+@keyframes steam-out{0%{opacity:0}12%,58%{opacity:1}100%{opacity:0}}
+@keyframes close-book{0%{opacity:0;transform:perspective(1200px) rotateY(-155deg) scale(.82);filter:brightness(1.22)}68%{opacity:1;transform:perspective(1200px) rotateY(8deg) scale(1.015);filter:brightness(1.04)}100%{opacity:1;transform:perspective(1200px) rotateY(0) scale(1);filter:brightness(1)}}
 .make-book{position:absolute;z-index:10;left:50%;top:calc(51% + min(33vw,390px));transform:translateX(-50%) translateY(10px);border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;padding:13px 22px;font-family:var(--serif);font-size:14px;letter-spacing:.02em;box-shadow:0 8px 18px rgba(86,52,42,.2);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .35s ease,transform .35s ease,background .2s ease;white-space:nowrap}
 .make-book:hover{background:#9f332f}.book-closed .make-book{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 .manual{min-height:100svh;padding:clamp(54px,8vw,110px) clamp(20px,8vw,120px);display:grid;place-items:center;background:#fffaf0;background-image:radial-gradient(rgba(86,52,42,.065) .6px,transparent .75px);background-size:5px 5px;color:var(--brown)}
@@ -91,7 +111,7 @@ button{font:inherit;color:inherit}
 .site-footer{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;position:relative;z-index:20;color:rgba(86,52,42,.55);font-size:9px;letter-spacing:.13em;text-transform:uppercase}
 @media(max-width:720px){
  .site{min-height:600px}.topbar{height:64px;flex-basis:64px;padding:0 16px}.brand-wordmark{width:110px;height:36px}.brand-tip{font-size:10px}.top-note{font-size:8px;letter-spacing:.08em}.scene{height:calc(100svh - 100px);min-height:500px}.book{width:94vw;height:67vh;min-height:390px;top:52%}.book-title{top:8%;font-size:18px}.book-title small{font-size:7px}.memory{width:clamp(50px,14vw,70px)}.memory figcaption{font-size:6px;padding:2px 3px}.cookie-wrap{width:130px;height:145px;top:52%}.cookie-button{width:94px;height:94px}.cookie-hint{font-size:9px}.sucking .memory{top:52%}.status{bottom:25px;font-size:11px}.replay{bottom:18px;right:14px;padding:8px 10px;font-size:9px}.site-footer{height:36px;flex-basis:36px;font-size:8px}
- .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover img{height:min(62vh,620px);max-width:78vw}.make-book{top:auto;bottom:20px;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
+ .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover img{height:min(58vh,470px);max-width:72vw}.steam{top:calc(50% - min(29vh,230px) - 20px)}.make-book{top:auto;bottom:20px;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -123,16 +143,17 @@ button{font:inherit;color:inherit}
         <img id="rightPage" src="assets/spread-0-right.jpg" alt="Crumbook 펼친 면 오른쪽 페이지">
         <div class="reader-gutter"></div>
       </div>
-      <div class="leaf next" id="nextLeaf"><img src="assets/spread-0-right.jpg" alt=""></div>
-      <div class="leaf prev" id="prevLeaf"><img src="assets/spread-0-left.jpg" alt=""></div>
+      <div class="leaf next" id="nextLeaf"><img class="front" src="assets/spread-0-right.jpg" alt=""><img class="back" src="assets/spread-1-left.jpg" alt=""></div>
+      <div class="leaf prev" id="prevLeaf"><img class="front" src="assets/spread-0-left.jpg" alt=""><img class="back" src="assets/spread-0-right.jpg" alt=""></div>
       <button class="page-hit left" id="previousPage" type="button" aria-label="왼쪽 페이지로 넘기기" data-label="← previous"></button>
       <button class="page-hit right" id="nextPage" type="button" aria-label="오른쪽 페이지로 넘기기" data-label="next →"></button>
       <div class="reader-count" id="readerCount">01 / 04</div>
       <div class="cover" id="cover" aria-label="Crumbook 표지">
         <img src="assets/book-cover.jpg" alt="로스앤젤레스 여행 Crumbook 표지">
+        <div class="steam" aria-hidden="true"><i></i><i></i><i></i></div>
       </div>
     </section>
-    <button class="make-book" id="makeBook" type="button">나만의 Crumbook 만들러 가기 <span aria-hidden="true">→</span></button>
+    <button class="make-book" id="makeBook" type="button">bake my crumbook <span aria-hidden="true">→</span></button>
     <div class="status" id="status">all your little moments, together.</div>
     <button class="replay" id="replay" type="button">다시 흩어보기 ↺</button>
   </main>
@@ -182,16 +203,17 @@ photos.forEach((p,i)=>{
 let started=false, timer, pageIndex=0, turning=false;
 const spreadCount=4;
 function setSpread(index){pageIndex=index;document.getElementById('leftPage').src=`assets/spread-${index}-left.jpg`;document.getElementById('rightPage').src=`assets/spread-${index}-right.jpg`;document.getElementById('readerCount').textContent=`양쪽 페이지를 눌러 넘겨보세요 · 0${index+1} / 0${spreadCount}`;}
-function collect(){if(started||root.classList.contains('arranged'))return;started=true;clearTimeout(timer);root.classList.add('cookie-ready','sucking');setTimeout(()=>{root.classList.remove('sucking');root.classList.add('arranged');setTimeout(()=>{root.classList.add('reading');setSpread(0);},1100);},1350);}
+function collect(){if(started||root.classList.contains('cover-ready'))return;started=true;clearTimeout(timer);root.classList.add('cookie-ready','sucking');setTimeout(()=>{root.classList.remove('sucking');root.classList.add('cover-ready');setSpread(0);},1350);}
 document.getElementById('cookieButton').addEventListener('click',collect);
-document.getElementById('brandButton').addEventListener('click',()=>{if(root.classList.contains('arranged'))reset();else if(root.classList.contains('cookie-ready'))collect();});
-function turnPage(direction){if(turning||!root.classList.contains('reading'))return;if(direction==='forward'&&pageIndex===spreadCount-1){root.classList.remove('reading');root.classList.add('book-closed');return;}if(direction==='backward'&&pageIndex===0)return;turning=true;const leaf=document.querySelector(direction==='forward'?'.leaf.next':'.leaf.prev');const leafImage=leaf.querySelector('img');leafImage.src=`assets/spread-${pageIndex}-${direction==='forward'?'right':'left'}.jpg`;root.classList.add('turning',direction);requestAnimationFrame(()=>requestAnimationFrame(()=>{}));setTimeout(()=>{setSpread(pageIndex+(direction==='forward'?1:-1));root.classList.remove('turning',direction);leafImage.src=`assets/spread-${pageIndex}-${direction==='forward'?'right':'left'}.jpg`;turning=false;},610);}
+document.getElementById('brandButton').addEventListener('click',()=>{if(root.classList.contains('cover-ready')||root.classList.contains('opening')||root.classList.contains('reading')||root.classList.contains('book-closed'))reset();else if(root.classList.contains('cookie-ready'))collect();});
+function openBook(){if(turning)return;if(root.classList.contains('book-closed')){root.classList.remove('book-closed');root.classList.add('reading');setSpread(spreadCount-1);return;}if(!root.classList.contains('cover-ready'))return;turning=true;root.classList.add('opening');setTimeout(()=>{root.classList.remove('opening','cover-ready');root.classList.add('reading');setSpread(0);turning=false;},820);}
+function turnPage(direction){if(turning)return;if(root.classList.contains('cover-ready')||root.classList.contains('book-closed')){openBook();return;}if(!root.classList.contains('reading'))return;if(direction==='forward'&&pageIndex===spreadCount-1){turning=true;root.classList.add('closing');setTimeout(()=>{root.classList.remove('reading','closing');root.classList.add('book-closed');turning=false;},820);return;}if(direction==='backward'&&pageIndex===0)return;turning=true;const oldIndex=pageIndex;const nextIndex=oldIndex+(direction==='forward'?1:-1);const leaf=document.querySelector(direction==='forward'?'.leaf.next':'.leaf.prev');leaf.querySelector('.front').src=`assets/spread-${oldIndex}-${direction==='forward'?'right':'left'}.jpg`;leaf.querySelector('.back').src=direction==='forward'?`assets/spread-${nextIndex}-left.jpg`:`assets/spread-${nextIndex}-right.jpg`;root.classList.add('turning',direction);void leaf.offsetWidth;setTimeout(()=>{setSpread(nextIndex);root.classList.remove('turning',direction);turning=false;},820);}
 document.getElementById('nextPage').addEventListener('click',()=>turnPage('forward'));
 document.getElementById('previousPage').addEventListener('click',()=>turnPage('backward'));
-document.getElementById('cover').addEventListener('click',()=>{root.classList.remove('book-closed');root.classList.add('reading');setSpread(spreadCount-1);});
+document.getElementById('cover').addEventListener('click',openBook);
 document.getElementById('makeBook').addEventListener('click',()=>document.getElementById('manual').scrollIntoView({behavior:'smooth'}));
 document.getElementById('backToBook').addEventListener('click',()=>document.getElementById('site').scrollIntoView({behavior:'smooth'}));
-function reset(){started=false;pageIndex=0;turning=false;root.classList.remove('arranged','sucking','reading','book-closed','turning','forward','backward');root.classList.add('cookie-ready');setSpread(0);}
+function reset(){started=false;pageIndex=0;turning=false;root.classList.remove('arranged','sucking','reading','cover-ready','opening','closing','book-closed','turning','forward','backward');root.classList.add('cookie-ready');setSpread(0);}
 document.getElementById('replay').addEventListener('click',reset);
 timer=setTimeout(()=>root.classList.add('cookie-ready'),3000);
 </script>
