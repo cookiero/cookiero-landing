@@ -55,6 +55,8 @@ button{font:inherit;color:inherit}
 .cover-ready .book,.opening .book,.reading .book,.closing .book,.book-closed .book{opacity:0;visibility:hidden}
 .reading .status,.cover-ready .status,.opening .status,.closing .status,.book-closed .status{opacity:0}
 .closing .memory,.closing .cookie-wrap{opacity:0!important;visibility:hidden;pointer-events:none}
+.cover-ready .spread,.cover-ready .leaf,.cover-ready .page-hit,.cover-ready .reader-count,.book-closed .spread,.book-closed .leaf,.book-closed .page-hit,.book-closed .reader-count{visibility:hidden;pointer-events:none}
+.opening .spread,.opening .leaf,.opening .page-hit,.opening .reader-count{visibility:visible;pointer-events:auto}
 .spread{position:absolute;inset:0;display:flex;background:#fffdf8;border-radius:5px 8px 8px 5px;box-shadow:0 22px 45px rgba(86,52,42,.24),0 3px 8px rgba(86,52,42,.18);overflow:hidden}
 .spread img{width:50%;height:100%;display:block;object-fit:cover;user-select:none;-webkit-user-drag:none}
 .spread img:first-child{border-right:1px solid rgba(86,52,42,.14)}
@@ -76,9 +78,12 @@ button{font:inherit;color:inherit}
 .turning .leaf::after{opacity:.75}
 .turning.forward .leaf.next{transform:rotateY(-180deg)}.turning.backward .leaf.prev{transform:rotateY(180deg)}
 .reader-count{position:absolute;z-index:5;left:50%;bottom:-30px;transform:translateX(-50%);font-size:10px;letter-spacing:.12em;color:rgba(86,52,42,.65);white-space:nowrap}
-.cover{position:absolute;z-index:6;inset:0;display:none;place-items:center;cursor:pointer}
+.cover{position:absolute;z-index:6;inset:0;display:none;place-items:center;pointer-events:none}
 .cover img{position:relative;z-index:1;height:min(68vh,570px);width:auto;max-width:66vw;object-fit:contain;border-radius:4px;box-shadow:0 20px 42px rgba(86,52,42,.3);user-select:none;transform-origin:left center;backface-visibility:hidden}
-.cover-ready .cover,.opening .cover,.closing .cover,.book-closed .cover{display:grid}
+.cover-ready .cover,.opening .cover,.closing .cover{display:grid}
+.cover-open-right{position:absolute;z-index:3;top:12%;left:50%;width:min(22vw,198px);height:76%;border:0;background:transparent;cursor:pointer;pointer-events:auto}
+.cover-open-right:focus-visible{outline:3px solid var(--cherry);outline-offset:-4px}
+.opening .cover-open-right{opacity:0;pointer-events:none}
 .cover::before{content:"";position:absolute;width:min(58vw,610px);height:min(73vh,640px);border-radius:50%;background:radial-gradient(ellipse,rgba(246,157,81,.42),rgba(246,190,113,.17) 38%,transparent 70%);filter:blur(18px);opacity:0;transform:scale(.72)}
 .cover-ready .cover::before{animation:oven-glow 1.65s ease-out both}
 .cover-ready .cover img{animation:bake-in 1.25s cubic-bezier(.2,.82,.2,1) both}
@@ -93,7 +98,15 @@ button{font:inherit;color:inherit}
 @keyframes steam-rise{0%{opacity:0;transform:translateY(13px) scaleX(.72)}35%{opacity:.78}100%{opacity:0;transform:translateY(-31px) scaleX(1.2)}}
 @keyframes steam-out{0%{opacity:0}12%,58%{opacity:1}100%{opacity:0}}
 @keyframes close-book{0%{opacity:0;transform:perspective(1200px) rotateY(-155deg) scale(.82);filter:brightness(1.22)}68%{opacity:1;transform:perspective(1200px) rotateY(8deg) scale(1.015);filter:brightness(1.04)}100%{opacity:1;transform:perspective(1200px) rotateY(0) scale(1);filter:brightness(1)}}
-.make-book{position:absolute;z-index:10;left:50%;top:calc(51% + min(33vw,390px));transform:translateX(-50%) translateY(10px);border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;padding:13px 22px;font-family:var(--serif);font-size:14px;letter-spacing:.02em;box-shadow:0 8px 18px rgba(86,52,42,.2);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .35s ease,transform .35s ease,background .2s ease;white-space:nowrap}
+.back-cover{display:none;position:absolute;z-index:7;left:50%;top:50%;height:min(68vh,570px);aspect-ratio:.693/1;transform:translate(-50%,-50%);flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(26px,4vw,52px) 22px;background:linear-gradient(135deg,#fae8af 0%,#f5dfa1 60%,#edd08a 100%);border:1px solid rgba(86,52,42,.24);border-radius:5px 8px 8px 5px;box-shadow:0 22px 42px rgba(86,52,42,.3),inset 8px 0 0 rgba(86,52,42,.08),inset 10px 0 0 rgba(255,255,255,.32);text-align:center;overflow:hidden}
+.back-cover::before{content:"";position:absolute;inset:14px;border:1px solid rgba(86,52,42,.24);pointer-events:none}
+.back-kicker,.back-edition{position:relative;z-index:1;font-size:9px;letter-spacing:.2em;color:rgba(86,52,42,.72)}
+.back-title{position:relative;z-index:1;font-family:var(--serif);font-size:clamp(34px,5.6vw,64px);line-height:.88;letter-spacing:-.055em;color:var(--brown);font-weight:700}
+.back-title em{font-weight:400;color:var(--cherry)}
+.book-closed .back-cover{display:flex}
+.closing .back-cover{display:flex;animation:closing-back .82s cubic-bezier(.48,.06,.22,1) both}
+@keyframes closing-back{0%{opacity:0;transform:translate(-50%,-50%) perspective(1200px) rotateY(165deg) scale(.82);filter:brightness(1.2)}68%{opacity:1;transform:translate(-50%,-50%) perspective(1200px) rotateY(-8deg) scale(1.015);filter:brightness(1.04)}100%{opacity:1;transform:translate(-50%,-50%) perspective(1200px) rotateY(0) scale(1);filter:brightness(1)}}
+.make-book{position:absolute;z-index:10;left:50%;top:calc(51% + min(34vh,285px) + 16px);transform:translateX(-50%) translateY(10px);border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;padding:13px 22px;font-family:var(--serif);font-size:14px;letter-spacing:.02em;box-shadow:0 8px 18px rgba(86,52,42,.2);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .35s ease,transform .35s ease,background .2s ease;white-space:nowrap}
 .make-book:hover{background:#9f332f}.book-closed .make-book{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 .manual{min-height:100svh;padding:clamp(54px,8vw,110px) clamp(20px,8vw,120px);display:grid;place-items:center;background:#fffaf0;background-image:radial-gradient(rgba(86,52,42,.065) .6px,transparent .75px);background-size:5px 5px;color:var(--brown)}
 .manual-inner{width:min(1100px,100%);display:grid;grid-template-columns:minmax(180px,.75fr) minmax(0,1.25fr);align-items:center;gap:clamp(32px,8vw,110px)}
@@ -111,7 +124,7 @@ button{font:inherit;color:inherit}
 .site-footer{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;position:relative;z-index:20;color:rgba(86,52,42,.55);font-size:9px;letter-spacing:.13em;text-transform:uppercase}
 @media(max-width:720px){
  .site{min-height:600px}.topbar{height:64px;flex-basis:64px;padding:0 16px}.brand-wordmark{width:110px;height:36px}.brand-tip{font-size:10px}.top-note{font-size:8px;letter-spacing:.08em}.scene{height:calc(100svh - 100px);min-height:500px}.book{width:94vw;height:67vh;min-height:390px;top:52%}.book-title{top:8%;font-size:18px}.book-title small{font-size:7px}.memory{width:clamp(50px,14vw,70px)}.memory figcaption{font-size:6px;padding:2px 3px}.cookie-wrap{width:130px;height:145px;top:52%}.cookie-button{width:94px;height:94px}.cookie-hint{font-size:9px}.sucking .memory{top:52%}.status{bottom:25px;font-size:11px}.replay{bottom:18px;right:14px;padding:8px 10px;font-size:9px}.site-footer{height:36px;flex-basis:36px;font-size:8px}
- .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover img{height:min(58vh,470px);max-width:72vw}.steam{top:calc(50% - min(29vh,230px) - 20px)}.make-book{top:auto;bottom:20px;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
+ .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover img{height:min(58vh,470px);max-width:72vw}.cover-open-right{width:min(40vw,144px)}.back-cover{height:min(58vh,470px);padding:25px 16px}.back-title{font-size:clamp(35px,11vw,48px)}.back-kicker,.back-edition{font-size:7px}.steam{top:calc(50% - min(29vh,230px) - 20px)}.make-book{top:calc(48% + min(29vh,230px) + 10px);bottom:auto;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -151,6 +164,12 @@ button{font:inherit;color:inherit}
       <div class="cover" id="cover" aria-label="Crumbook 표지">
         <img src="assets/book-cover.jpg" alt="로스앤젤레스 여행 Crumbook 표지">
         <div class="steam" aria-hidden="true"><i></i><i></i><i></i></div>
+        <button class="cover-open-right" id="coverOpen" type="button" aria-label="표지 오른쪽을 눌러 Crumbook 펼치기"></button>
+      </div>
+      <div class="back-cover" id="backCover" aria-label="Crumbook 뒷표지">
+        <span class="back-kicker">COOKIE:RO · LOS ANGELES</span>
+        <strong class="back-title">your trip,<br><em>baked</em></strong>
+        <span class="back-edition">A LITTLE CRUMBOOK · 2026</span>
       </div>
     </section>
     <button class="make-book" id="makeBook" type="button">bake my crumbook <span aria-hidden="true">→</span></button>
@@ -206,11 +225,11 @@ function setSpread(index){pageIndex=index;document.getElementById('leftPage').sr
 function collect(){if(started||root.classList.contains('cover-ready'))return;started=true;clearTimeout(timer);root.classList.add('cookie-ready','sucking');setTimeout(()=>{root.classList.remove('sucking');root.classList.add('cover-ready');setSpread(0);},1350);}
 document.getElementById('cookieButton').addEventListener('click',collect);
 document.getElementById('brandButton').addEventListener('click',()=>{if(root.classList.contains('cover-ready')||root.classList.contains('opening')||root.classList.contains('reading')||root.classList.contains('book-closed'))reset();else if(root.classList.contains('cookie-ready'))collect();});
-function openBook(){if(turning)return;if(root.classList.contains('book-closed')){root.classList.remove('book-closed');root.classList.add('reading');setSpread(spreadCount-1);return;}if(!root.classList.contains('cover-ready'))return;turning=true;root.classList.add('opening');setTimeout(()=>{root.classList.remove('opening','cover-ready');root.classList.add('reading');setSpread(0);turning=false;},820);}
-function turnPage(direction){if(turning)return;if(root.classList.contains('cover-ready')||root.classList.contains('book-closed')){openBook();return;}if(!root.classList.contains('reading'))return;if(direction==='forward'&&pageIndex===spreadCount-1){turning=true;root.classList.add('closing');setTimeout(()=>{root.classList.remove('reading','closing');root.classList.add('book-closed');turning=false;},820);return;}if(direction==='backward'&&pageIndex===0)return;turning=true;const oldIndex=pageIndex;const nextIndex=oldIndex+(direction==='forward'?1:-1);const leaf=document.querySelector(direction==='forward'?'.leaf.next':'.leaf.prev');leaf.querySelector('.front').src=`assets/spread-${oldIndex}-${direction==='forward'?'right':'left'}.jpg`;leaf.querySelector('.back').src=direction==='forward'?`assets/spread-${nextIndex}-left.jpg`:`assets/spread-${nextIndex}-right.jpg`;root.classList.add('turning',direction);void leaf.offsetWidth;setTimeout(()=>{setSpread(nextIndex);root.classList.remove('turning',direction);turning=false;},820);}
+function openBook(){if(turning||!root.classList.contains('cover-ready'))return;turning=true;root.classList.add('opening');setTimeout(()=>{root.classList.remove('opening','cover-ready');root.classList.add('reading');setSpread(0);turning=false;},820);}
+function turnPage(direction){if(turning||!root.classList.contains('reading'))return;if(direction==='forward'&&pageIndex===spreadCount-1){turning=true;root.classList.add('closing');setTimeout(()=>{root.classList.remove('reading','closing');root.classList.add('book-closed');turning=false;},820);return;}if(direction==='backward'&&pageIndex===0)return;turning=true;const oldIndex=pageIndex;const nextIndex=oldIndex+(direction==='forward'?1:-1);const leaf=document.querySelector(direction==='forward'?'.leaf.next':'.leaf.prev');leaf.querySelector('.front').src=`assets/spread-${oldIndex}-${direction==='forward'?'right':'left'}.jpg`;leaf.querySelector('.back').src=direction==='forward'?`assets/spread-${nextIndex}-left.jpg`:`assets/spread-${nextIndex}-right.jpg`;root.classList.add('turning',direction);void leaf.offsetWidth;setTimeout(()=>{setSpread(nextIndex);root.classList.remove('turning',direction);turning=false;},820);}
 document.getElementById('nextPage').addEventListener('click',()=>turnPage('forward'));
 document.getElementById('previousPage').addEventListener('click',()=>turnPage('backward'));
-document.getElementById('cover').addEventListener('click',openBook);
+document.getElementById('coverOpen').addEventListener('click',openBook);
 document.getElementById('makeBook').addEventListener('click',()=>document.getElementById('manual').scrollIntoView({behavior:'smooth'}));
 document.getElementById('backToBook').addEventListener('click',()=>document.getElementById('site').scrollIntoView({behavior:'smooth'}));
 function reset(){started=false;pageIndex=0;turning=false;root.classList.remove('arranged','sucking','reading','cover-ready','opening','closing','book-closed','turning','forward','backward');root.classList.add('cookie-ready');setSpread(0);}
