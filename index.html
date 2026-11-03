@@ -29,41 +29,28 @@ button{font:inherit;color:inherit}
 .book-title small{display:block;margin-top:5px;font-family:Arial,sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(86,52,42,.5)}
 .book-corner{position:absolute;z-index:2;bottom:5%;font-family:var(--serif);font-size:12px;font-style:italic;color:rgba(86,52,42,.44)}
 .book-corner.left{left:7%}.book-corner.right{right:7%}
-.memory{position:absolute;z-index:5;left:var(--sx);top:var(--sy);width:10.5%;padding:5px 5px 16px;background:#fffefa;box-shadow:0 8px 22px rgba(70,46,35,.22);transform:translate(-50%,-50%) rotate(var(--tilt));transition:left 850ms cubic-bezier(.15,.78,.24,1),top 850ms cubic-bezier(.15,.78,.24,1),transform 850ms cubic-bezier(.15,.78,.24,1),opacity 500ms ease,filter 500ms ease;transition-delay:var(--delay);}
-.memory img{display:block;width:100%;aspect-ratio:1.45;object-fit:cover;background:#ece5d8}
-.memory figcaption{position:absolute;left:7px;right:7px;bottom:3px;height:12px;display:flex;align-items:center;justify-content:space-between;font-size:8px;line-height:1;color:rgba(73,53,46,.8);letter-spacing:.06em;white-space:nowrap;overflow:hidden}
-.memory figcaption span:last-child{font-family:var(--serif);font-style:italic;color:rgba(73,53,46,.55)}
+.memory{position:absolute;z-index:5;left:var(--sx);top:var(--sy);width:clamp(54px,6vw,86px);margin:0;padding:0;background:transparent;transform:translate(-50%,-50%);transition:left 850ms cubic-bezier(.15,.78,.24,1),top 850ms cubic-bezier(.15,.78,.24,1),transform 850ms cubic-bezier(.15,.78,.24,1),opacity 500ms ease,filter 500ms ease;transition-delay:var(--delay);}
+.memory img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#ece5d8;border:1px solid rgba(255,255,255,.92);box-shadow:0 2px 5px rgba(86,52,42,.2)}
+.memory figcaption{display:block;width:max-content;max-width:150%;margin:3px auto 0;padding:2px 4px;background:rgba(255,253,248,.78);color:var(--brown);font-family:Arial,sans-serif;font-size:8px;line-height:1.15;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .cookie-wrap{position:absolute;z-index:12;left:50%;top:51%;width:160px;height:170px;transform:translate(-50%,-50%);display:grid;place-items:center;opacity:0;visibility:hidden;transition:opacity 600ms ease,visibility 600ms,transform 650ms cubic-bezier(.18,.8,.25,1.35);}
 .cookie-ready .cookie-wrap{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
-.cookie-button{position:relative;z-index:3;width:116px;height:116px;border:0;padding:0;background:transparent;cursor:pointer;filter:drop-shadow(0 9px 9px rgba(86,52,42,.23));animation:cookie-bob 2.8s ease-in-out infinite;}
+.cookie-button{position:relative;z-index:3;width:116px;height:116px;border:0;padding:0;background:transparent;cursor:pointer;filter:drop-shadow(0 9px 9px rgba(86,52,42,.23));}
 .cookie-button img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .25s ease}
-.cookie-button:hover img{transform:scale(1.08) rotate(-5deg)}
-.cookie-orbit{position:absolute;width:158px;height:65px;border:1px solid rgba(182,61,57,.64);border-radius:50%;transform:rotate(-16deg);animation:orbit 5s linear infinite;}
-.cookie-orbit::before{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--cherry);top:2px;left:27px;box-shadow:0 0 12px rgba(182,61,57,.5)}
+.cookie-button:hover img{transform:none}
 .cookie-hint{position:absolute;top:calc(100% + 7px);white-space:nowrap;background:var(--cherry);color:#fff8e9;border-radius:2px;padding:7px 11px;font-size:10px;letter-spacing:.04em;box-shadow:0 5px 12px rgba(86,52,42,.2)}
 .cookie-hint::before{content:"";position:absolute;left:50%;top:-5px;width:9px;height:9px;background:var(--cherry);transform:translateX(-50%) rotate(45deg)}
-.cookie-wrap::before{content:"";position:absolute;inset:-76px;border:1px dashed rgba(182,61,57,.55);border-radius:50%;opacity:0;transform:scale(.55) rotate(0);transition:opacity .25s ease,transform .35s ease;pointer-events:none}
-.cookie-wrap::after{content:"";position:absolute;inset:-105px;border-radius:50%;background:radial-gradient(circle at 50% 0%,var(--cherry) 0 2px,transparent 3px),radial-gradient(circle at 100% 50%,var(--brown) 0 2px,transparent 3px),radial-gradient(circle at 50% 100%,var(--cherry) 0 2px,transparent 3px),radial-gradient(circle at 0% 50%,var(--brown) 0 2px,transparent 3px);opacity:0;transform:scale(.6);pointer-events:none}
-.sucking .cookie-wrap::before{opacity:1;transform:scale(1) rotate(360deg);animation:swirl .9s linear infinite}
-.sucking .cookie-wrap::after{opacity:.9;transform:scale(1);animation:crumbs .7s ease-in-out infinite alternate}
-.sucking .cookie-button{animation:cookie-suck .7s ease-in-out infinite}
 .sucking .cookie-hint{opacity:0}
 .sucking .memory{left:50%;top:51%;opacity:0;filter:blur(1.5px);transform:translate(-50%,-50%) scale(.025) rotate(720deg);transition-duration:800ms;}
-.arranged .memory{left:var(--fx);top:var(--fy);opacity:1;filter:none;transform:translate(-50%,-50%) rotate(var(--final-tilt)) scale(1);}
-.arranged .cookie-wrap{opacity:0;visibility:hidden;transform:translate(-50%,-50%) scale(.35);transition-duration:300ms}
+.arranged .memory{left:var(--fx);top:var(--fy);opacity:1;filter:none;transform:translate(-50%,-50%);}
+.arranged .cookie-wrap{opacity:0;visibility:hidden;transition-duration:300ms}
 .replay{position:absolute;z-index:15;right:clamp(20px,4vw,60px);bottom:clamp(18px,3vh,36px);border:1px solid rgba(86,52,42,.45);background:rgba(255,253,248,.8);padding:9px 13px;border-radius:2px;font-size:10px;letter-spacing:.06em;cursor:pointer;opacity:0;visibility:hidden;transition:opacity 300ms ease,background .2s ease}
 .replay:hover{background:#fffefa}
 .arranged .replay{opacity:1;visibility:visible}
 .status{position:absolute;z-index:14;left:50%;bottom:clamp(18px,3vh,36px);transform:translateX(-50%);font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(86,52,42,.72);opacity:0;transition:opacity .4s ease}
 .arranged .status{opacity:1}
 .site-footer{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;position:relative;z-index:20;color:rgba(86,52,42,.55);font-size:9px;letter-spacing:.13em;text-transform:uppercase}
-@keyframes cookie-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes orbit{to{transform:rotate(344deg)}}
-@keyframes cookie-suck{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.2) rotate(16deg)}}
-@keyframes swirl{to{transform:scale(1) rotate(360deg)}}
-@keyframes crumbs{to{transform:scale(1.12) rotate(-12deg)}}
 @media(max-width:720px){
- body{overflow:hidden}.site{min-height:600px}.topbar{height:64px;flex-basis:64px;padding:0 16px}.brand-wordmark{width:110px;height:36px}.brand-tip{font-size:10px}.top-note{font-size:8px;letter-spacing:.08em}.scene{height:calc(100svh - 100px);min-height:500px}.book{width:94vw;height:67vh;min-height:390px;top:52%}.book-title{top:8%;font-size:18px}.book-title small{font-size:7px}.memory{width:16%;padding:4px 4px 13px}.memory figcaption{left:4px;right:4px;bottom:2px;height:9px;font-size:6px}.cookie-wrap{width:130px;height:145px;top:52%}.cookie-button{width:94px;height:94px}.cookie-orbit{width:132px;height:54px}.cookie-hint{font-size:9px}.sucking .memory{top:52%}.status{bottom:25px;font-size:11px}.replay{bottom:18px;right:14px;padding:8px 10px;font-size:9px}.site-footer{height:36px;flex-basis:36px;font-size:8px}}
+ body{overflow:hidden}.site{min-height:600px}.topbar{height:64px;flex-basis:64px;padding:0 16px}.brand-wordmark{width:110px;height:36px}.brand-tip{font-size:10px}.top-note{font-size:8px;letter-spacing:.08em}.scene{height:calc(100svh - 100px);min-height:500px}.book{width:94vw;height:67vh;min-height:390px;top:52%}.book-title{top:8%;font-size:18px}.book-title small{font-size:7px}.memory{width:clamp(50px,14vw,70px)}.memory figcaption{font-size:6px;padding:2px 3px}.cookie-wrap{width:130px;height:145px;top:52%}.cookie-button{width:94px;height:94px}.cookie-hint{font-size:9px}.sucking .memory{top:52%}.status{bottom:25px;font-size:11px}.replay{bottom:18px;right:14px;padding:8px 10px;font-size:9px}.site-footer{height:36px;flex-basis:36px;font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -87,7 +74,6 @@ button{font:inherit;color:inherit}
       <button class="cookie-button" id="cookieButton" type="button" aria-label="쿠키를 눌러 여행 사진을 포토북에 모으기">
         <img src="assets/cookie-ring.png" alt="">
       </button>
-      <span class="cookie-orbit" aria-hidden="true"></span>
       <span class="cookie-hint">tap to collect</span>
     </div>
     <div class="status" id="status">all your little moments, together.</div>
@@ -97,27 +83,27 @@ button{font:inherit;color:inherit}
 </div>
 <script>
 const photos = [
-  {src:'trip-01-rodeo-print.jpg',alt:'로데오 드라이브의 흰 건물과 빨간 차양',caption:'RODEO DRIVE',sx:13,sy:17,tilt:-9,fx:18,fy:32},
-  {src:'trip-02-beverly.jpg',alt:'파란 하늘 아래 베벌리 드라이브 표지판',caption:'BEVERLY DR',sx:84,sy:17,tilt:8,fx:31,fy:32},
-  {src:'trip-03-smoothie.jpg',alt:'에레혼에서 산 딸기 스무디',caption:'A LITTLE TREAT',sx:5,sy:44,tilt:7,fx:44,fy:32},
-  {src:'trip-04-postcard.jpg',alt:'베벌리힐스 엽서와 여행 노트',caption:'POSTCARD SHOP',sx:92,sy:47,tilt:-7,fx:18,fy:52},
-  {src:'trip-05-palms.jpg',alt:'야자수가 늘어선 로스앤젤레스 거리의 여행자',caption:'PALM-LINED DAY',sx:20,sy:77,tilt:5,fx:31,fy:52},
-  {src:'trip-06-walk.jpg',alt:'야자수와 긴 벽이 이어지는 산책길',caption:'ON THE WAY',sx:77,sy:78,tilt:-8,fx:44,fy:52},
-  {src:'trip-07-mural.jpg',alt:'선글라스를 쓴 공룡 벽화',caption:'CHILL SINCE 1993',sx:37,sy:9,tilt:6,fx:31,fy:72},
-  {src:'trip-08-griffith.jpg',alt:'밤에 불이 켜진 그리피스 천문대',caption:'AFTER DARK',sx:67,sy:9,tilt:-4,fx:56,fy:32},
-  {src:'trip-09-walk-of-fame.jpg',alt:'할리우드 명예의 거리에서 찍은 운동화',caption:'WALK OF FAME',sx:2,sy:65,tilt:-11,fx:69,fy:32},
-  {src:'trip-10-route66.jpg',alt:'벽에 걸린 캘리포니아 66번 도로 표지판',caption:'ROUTE 66',sx:93,sy:64,tilt:9,fx:82,fy:32},
-  {src:'trip-11-hollywood.jpg',alt:'멀리 보이는 할리우드 사인',caption:'HOLLYWOOD',sx:29,sy:87,tilt:-6,fx:56,fy:52},
-  {src:'trip-12-souvenirs.jpg',alt:'로스앤젤레스 기념 핀과 자석들',caption:'TINY SOUVENIRS',sx:73,sy:88,tilt:7,fx:69,fy:52},
-  {src:'trip-13-in-n-out.jpg',alt:'해 질 무렵 인앤아웃 버거 간판',caption:'GOLDEN HOUR',sx:47,sy:92,tilt:-9,fx:82,fy:52},
-  {src:'trip-14-pizza.jpg',alt:'여행 중 함께 나눠 먹은 피자',caption:'ONE LAST SLICE',sx:53,sy:8,tilt:5,fx:69,fy:72}
+  {src:'trip-01-rodeo.jpg',alt:'로데오 드라이브의 흰 건물과 빨간 차양',caption:'IMG_1048.JPG',sx:13,sy:17,fx:18,fy:32},
+  {src:'trip-02-beverly.jpg',alt:'파란 하늘 아래 베벌리 드라이브 표지판',caption:'IMG_1052.JPG',sx:84,sy:17,fx:31,fy:32},
+  {src:'trip-03-smoothie.jpg',alt:'에레혼에서 산 딸기 스무디',caption:'IMG_1061.JPG',sx:5,sy:44,fx:44,fy:32},
+  {src:'trip-04-postcard.jpg',alt:'베벌리힐스 엽서와 여행 노트',caption:'IMG_1077.JPG',sx:92,sy:47,fx:18,fy:52},
+  {src:'trip-05-palms.jpg',alt:'야자수가 늘어선 로스앤젤레스 거리의 여행자',caption:'IMG_1089.JPG',sx:20,sy:77,fx:31,fy:52},
+  {src:'trip-06-walk.jpg',alt:'야자수와 긴 벽이 이어지는 산책길',caption:'IMG_1093.JPG',sx:77,sy:78,fx:44,fy:52},
+  {src:'trip-07-mural.jpg',alt:'선글라스를 쓴 공룡 벽화',caption:'IMG_1104.JPG',sx:37,sy:9,fx:31,fy:72},
+  {src:'trip-08-griffith.jpg',alt:'밤에 불이 켜진 그리피스 천문대',caption:'IMG_1120.JPG',sx:67,sy:9,fx:56,fy:32},
+  {src:'trip-09-walk-of-fame.jpg',alt:'할리우드 명예의 거리에서 찍은 운동화',caption:'IMG_1138.JPG',sx:2,sy:65,fx:69,fy:32},
+  {src:'trip-10-route66.jpg',alt:'벽에 걸린 캘리포니아 66번 도로 표지판',caption:'IMG_1151.JPG',sx:93,sy:64,fx:82,fy:32},
+  {src:'trip-11-hollywood.jpg',alt:'멀리 보이는 할리우드 사인',caption:'IMG_1164.JPG',sx:29,sy:87,fx:56,fy:52},
+  {src:'trip-12-souvenirs.jpg',alt:'로스앤젤레스 기념 핀과 자석들',caption:'IMG_1170.JPG',sx:73,sy:88,fx:69,fy:52},
+  {src:'trip-13-in-n-out.jpg',alt:'해 질 무렵 인앤아웃 버거 간판',caption:'IMG_1182.JPG',sx:47,sy:92,fx:82,fy:52},
+  {src:'trip-14-pizza.jpg',alt:'여행 중 함께 나눠 먹은 피자',caption:'IMG_1190.JPG',sx:53,sy:8,fx:69,fy:72}
 ];
 const root=document.body, memories=document.getElementById('memories');
 photos.forEach((p,i)=>{
   const fig=document.createElement('figure'); fig.className='memory';
-  fig.style.cssText=`--sx:${p.sx}%;--sy:${p.sy}%;--tilt:${p.tilt}deg;--fx:${p.fx}%;--fy:${p.fy}%;--final-tilt:${(i%3-1)*1.3}deg;--delay:${Math.min(i*38,460)}ms;`;
+  fig.style.cssText=`--sx:${p.sx}%;--sy:${p.sy}%;--fx:${p.fx}%;--fy:${p.fy}%;--delay:${Math.min(i*38,460)}ms;`;
   const img=document.createElement('img'); img.src='assets/'+p.src; img.alt=p.alt; img.loading='eager';
-  const cap=document.createElement('figcaption'); cap.innerHTML=`<span>${p.caption}</span><span>${String(i+1).padStart(2,'0')}</span>`;
+  const cap=document.createElement('figcaption'); cap.textContent=p.caption;
   fig.append(img,cap); memories.append(fig);
 });
 let started=false, timer;
