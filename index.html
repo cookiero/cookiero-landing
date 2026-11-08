@@ -9,7 +9,7 @@
 :root{--butter:#F5DFA1;--brown:#56342A;--cherry:#B63D39;--paper:#fffdf8;--ink:#49352E;--serif:Georgia,'Times New Roman',serif}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--butter);color:var(--brown)}
-body{font-family:Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow-x:hidden;overflow-y:auto;scroll-behavior:smooth}
+body{font-family:Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow-x:hidden;overflow-y:auto}
 button{font:inherit;color:inherit}
 .site{height:100svh;min-height:620px;display:flex;flex-direction:column;overflow:hidden;position:relative;background-color:var(--butter);background-image:radial-gradient(rgba(86,52,42,.09) .65px,transparent .75px);background-size:5px 5px}
 .site::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,rgba(255,255,255,.14),transparent 40%,rgba(182,61,57,.035));}
@@ -47,7 +47,7 @@ button{font:inherit;color:inherit}
 .replay{position:absolute;z-index:15;right:clamp(20px,4vw,60px);bottom:clamp(18px,3vh,36px);border:1px solid rgba(86,52,42,.45);background:rgba(255,253,248,.8);padding:9px 13px;border-radius:2px;font-size:10px;letter-spacing:.06em;cursor:pointer;opacity:0;visibility:hidden;transition:opacity 300ms ease,background .2s ease}
 .replay:hover{background:#fffefa}
 .arranged .replay{opacity:0;visibility:hidden}
-.status{position:absolute;z-index:14;left:50%;bottom:clamp(18px,3vh,36px);transform:translateX(-50%);font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(86,52,42,.72);opacity:0;transition:opacity .4s ease}
+.status{pointer-events:none;position:absolute;z-index:14;left:50%;bottom:clamp(18px,3vh,36px);transform:translateX(-50%);font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(86,52,42,.72);opacity:0;transition:opacity .4s ease}
 .arranged .status{opacity:1}
 .reader{position:absolute;z-index:8;left:50%;top:51%;width:min(78vw,900px,calc((100svh - 260px)*1.52));aspect-ratio:1.52/1;transform:translate(-50%,-50%);perspective:1800px;opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s;}
 .cover-ready .reader,.opening .reader,.reading .reader,.book-closed .reader{opacity:1;visibility:visible}
@@ -55,8 +55,6 @@ button{font:inherit;color:inherit}
 .cover-ready .book,.opening .book,.reading .book,.closing .book,.book-closed .book{opacity:0;visibility:hidden}
 .reading .status,.cover-ready .status,.opening .status,.closing .status,.book-closed .status{opacity:0}
 .closing .memory,.closing .cookie-wrap{opacity:0!important;visibility:hidden;pointer-events:none}
-.cover-ready .spread,.cover-ready .leaf,.cover-ready .page-hit,.cover-ready .reader-count,.book-closed .spread,.book-closed .leaf,.book-closed .page-hit,.book-closed .reader-count{visibility:hidden;pointer-events:none}
-.opening .spread,.opening .leaf,.opening .page-hit,.opening .reader-count{visibility:visible;pointer-events:auto}
 .spread{position:absolute;inset:0;display:flex;background:#fffdf8;border-radius:5px 8px 8px 5px;box-shadow:0 22px 45px rgba(86,52,42,.24),0 3px 8px rgba(86,52,42,.18);overflow:hidden}
 .spread img{width:50%;height:100%;display:block;object-fit:cover;user-select:none;-webkit-user-drag:none}
 .spread img:first-child{border-right:1px solid rgba(86,52,42,.14)}
@@ -67,28 +65,43 @@ button{font:inherit;color:inherit}
 .page-hit.left::after{left:18px}.page-hit.right::after{right:18px}
 .page-hit:hover::after,.page-hit:focus-visible::after{opacity:1}
 .page-hit:focus-visible{outline:2px solid var(--cherry);outline-offset:-5px}
-.leaf{position:absolute;z-index:3;top:0;bottom:0;width:50%;background:#fffdf8;transform-style:preserve-3d;pointer-events:none;box-shadow:0 0 18px rgba(55,35,25,.26);opacity:0;will-change:transform}
-.leaf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.leaf img.back{transform:rotateY(180deg)}
-.leaf.next{right:0;transform-origin:left center;transform:rotateY(0)}.leaf.prev{left:0;transform-origin:right center;transform:rotateY(0)}
-.leaf.next::after,.leaf.prev::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .72s ease}
-.leaf.next::after{background:linear-gradient(90deg,rgba(52,35,24,.28),transparent 28%,rgba(255,255,255,.08) 72%,rgba(57,36,23,.18))}
-.leaf.prev::after{background:linear-gradient(270deg,rgba(52,35,24,.28),transparent 28%,rgba(255,255,255,.08) 72%,rgba(57,36,23,.18))}
-.turning .leaf{opacity:1;transition:transform .82s cubic-bezier(.48,.06,.22,1)}
-.turning .leaf::after{opacity:.75}
-.turning.forward .leaf.next{transform:rotateY(-180deg)}.turning.backward .leaf.prev{transform:rotateY(180deg)}
+.leaf{position:absolute;z-index:3;top:0;bottom:0;width:50%;transform-style:preserve-3d;pointer-events:none;opacity:0}
+.leaf.active{opacity:1}
+.leaf.next{right:0}.leaf.prev{left:0}
+.strip{position:absolute;top:0;height:100%;transform-style:preserve-3d;will-change:transform}
+.leaf.next>.strip{left:0;width:calc(100% / var(--n));transform-origin:left center}
+.leaf.next .strip .strip{left:100%;width:100%;transform-origin:left center}
+.leaf.prev>.strip{right:0;width:calc(100% / var(--n));transform-origin:right center}
+.leaf.prev .strip .strip{right:100%;width:100%;transform-origin:right center}
+.face{position:absolute;top:0;left:0;height:100%;width:calc(100% + .6px);backface-visibility:hidden;-webkit-backface-visibility:hidden;background-color:#fffdf8;background-repeat:no-repeat;background-size:calc(var(--n) * 100%) 100%}
+.leaf.prev .face{left:-.6px}
+.face.front{background-image:var(--front);background-position:var(--fx) 0}
+.face.back{background-image:var(--back);background-position:var(--bx) 0;transform:rotateY(180deg)}
+.face::after{content:"";position:absolute;inset:0;background:#2a1a10;opacity:var(--sh,0)}
+.cover-ready .spread,.cover-ready .leaf,.cover-ready .page-hit,.cover-ready .reader-count,.book-closed .page-hit,.book-closed .reader-count{visibility:hidden;pointer-events:none}
+.opening .leaf{visibility:visible}
+.opening.open-flip .spread{visibility:visible}
+.cover-ready .reader{transform:translate(-75%,-50%)}
+.opening .reader{transform:translate(-50%,-50%);transition:opacity .35s ease,visibility .35s,transform .85s cubic-bezier(.5,.05,.2,1)}
+.book-closed .reader{transform:translate(-25%,-50%);transition:opacity .35s ease,visibility .35s,transform .9s cubic-bezier(.5,.05,.2,1)}
+.reader.half-right .spread,.reader.half-left .spread{background:transparent;box-shadow:none;overflow:visible}
+.reader.half-right #leftPage,.reader.half-left #rightPage,.reader.half-right .reader-gutter,.reader.half-left .reader-gutter{visibility:hidden}
+.reader.half-right #rightPage{border-radius:0 8px 8px 0;box-shadow:0 22px 45px rgba(86,52,42,.24),0 3px 8px rgba(86,52,42,.18)}
+.reader.half-left #leftPage{border-radius:5px 0 0 5px;border-right:0;box-shadow:0 22px 45px rgba(86,52,42,.24),0 3px 8px rgba(86,52,42,.18)}
+.leaf.cover-tex .face.front{background-color:#f8f7f3;background-size:calc(var(--n) * 91.2%) 100%;background-position:var(--fxc) 0}
+.cast{position:absolute;z-index:2;top:0;bottom:0;width:50%;pointer-events:none;opacity:0}
+.cast.l{left:0;background:linear-gradient(270deg,rgba(40,24,14,.5),transparent 62%)}
+.cast.r{right:0;background:linear-gradient(90deg,rgba(40,24,14,.5),transparent 62%)}
 .reader-count{position:absolute;z-index:5;left:50%;bottom:-30px;transform:translateX(-50%);font-size:10px;letter-spacing:.12em;color:rgba(86,52,42,.65);white-space:nowrap}
-.cover{position:absolute;z-index:6;inset:0;display:none;place-items:center;pointer-events:none}
-.cover img{position:relative;z-index:1;height:min(68vh,570px);width:auto;max-width:66vw;object-fit:contain;border-radius:4px;box-shadow:0 20px 42px rgba(86,52,42,.3);user-select:none;transform-origin:left center;backface-visibility:hidden}
-.cover-ready .cover,.opening .cover,.closing .cover{display:grid}
-.cover-open-right{position:absolute;z-index:3;top:12%;left:50%;width:min(22vw,198px);height:76%;border:0;background:transparent;cursor:pointer;pointer-events:auto}
+.cover{position:absolute;z-index:6;top:0;bottom:0;left:50%;width:50%;display:none;pointer-events:none;background:#f8f7f3;border-radius:0 8px 8px 0;box-shadow:0 20px 42px rgba(86,52,42,.3)}
+.cover img{position:relative;z-index:1;display:block;height:100%;width:auto;max-width:none;user-select:none;-webkit-user-drag:none}
+.cover-ready .cover{display:block}.opening.open-flip .cover{display:none}
+.cover-open-right{position:absolute;z-index:3;top:8%;left:25%;width:75%;height:84%;border:0;background:transparent;cursor:pointer;pointer-events:auto}
 .cover-open-right:focus-visible{outline:3px solid var(--cherry);outline-offset:-4px}
 .opening .cover-open-right{opacity:0;pointer-events:none}
-.cover::before{content:"";position:absolute;width:min(58vw,610px);height:min(73vh,640px);border-radius:50%;background:radial-gradient(ellipse,rgba(246,157,81,.42),rgba(246,190,113,.17) 38%,transparent 70%);filter:blur(18px);opacity:0;transform:scale(.72)}
+.cover::before{content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;width:min(58vw,610px);height:min(73vh,640px);border-radius:50%;background:radial-gradient(ellipse,rgba(246,157,81,.42),rgba(246,190,113,.17) 38%,transparent 70%);filter:blur(18px);opacity:0;transform:scale(.72)}
 .cover-ready .cover::before{animation:oven-glow 1.65s ease-out both}
-.cover-ready .cover img{animation:bake-in 1.25s cubic-bezier(.2,.82,.2,1) both}
-.opening .cover img{animation:none;transition:transform .82s cubic-bezier(.48,.06,.22,1),opacity .75s ease;transform:rotateY(-165deg);opacity:.42}
-.closing .cover img{animation:close-book .82s cubic-bezier(.48,.06,.22,1) both}
+.cover-ready .cover{animation:bake-in 1.25s cubic-bezier(.2,.82,.2,1) both}
 .steam{position:absolute;z-index:2;top:calc(50% - min(34vh,285px) - 26px);left:50%;display:flex;gap:26px;transform:translateX(-50%);opacity:0;pointer-events:none}
 .cover-ready .steam{animation:steam-out 1.8s ease-out both}
 .steam i{display:block;width:10px;height:48px;border-radius:50%;background:rgba(255,250,224,.82);filter:blur(7px);animation:steam-rise 1.65s ease-out infinite}
@@ -98,7 +111,7 @@ button{font:inherit;color:inherit}
 @keyframes steam-rise{0%{opacity:0;transform:translateY(13px) scaleX(.72)}35%{opacity:.78}100%{opacity:0;transform:translateY(-31px) scaleX(1.2)}}
 @keyframes steam-out{0%{opacity:0}12%,58%{opacity:1}100%{opacity:0}}
 @keyframes close-book{0%{opacity:0;transform:perspective(1200px) rotateY(-155deg) scale(.82);filter:brightness(1.22)}68%{opacity:1;transform:perspective(1200px) rotateY(8deg) scale(1.015);filter:brightness(1.04)}100%{opacity:1;transform:perspective(1200px) rotateY(0) scale(1);filter:brightness(1)}}
-.back-cover{display:none;position:absolute;z-index:7;left:50%;top:50%;height:min(68vh,570px);aspect-ratio:.693/1;transform:translate(-50%,-50%);flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(26px,4vw,52px) 22px;background:linear-gradient(135deg,#fae8af 0%,#f5dfa1 60%,#edd08a 100%);border:1px solid rgba(86,52,42,.24);border-radius:5px 8px 8px 5px;box-shadow:0 22px 42px rgba(86,52,42,.3),inset 8px 0 0 rgba(86,52,42,.08),inset 10px 0 0 rgba(255,255,255,.32);text-align:center;overflow:hidden}
+.back-cover{display:none!important;position:absolute;z-index:7;left:50%;top:50%;height:min(68vh,570px);aspect-ratio:.693/1;transform:translate(-50%,-50%);flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(26px,4vw,52px) 22px;background:linear-gradient(135deg,#fae8af 0%,#f5dfa1 60%,#edd08a 100%);border:1px solid rgba(86,52,42,.24);border-radius:5px 8px 8px 5px;box-shadow:0 22px 42px rgba(86,52,42,.3),inset 8px 0 0 rgba(86,52,42,.08),inset 10px 0 0 rgba(255,255,255,.32);text-align:center;overflow:hidden}
 .back-cover::before{content:"";position:absolute;inset:14px;border:1px solid rgba(86,52,42,.24);pointer-events:none}
 .back-kicker,.back-edition{position:relative;z-index:1;font-size:9px;letter-spacing:.2em;color:rgba(86,52,42,.72)}
 .back-title{position:relative;z-index:1;font-family:var(--serif);font-size:clamp(34px,5.6vw,64px);line-height:.88;letter-spacing:-.055em;color:var(--brown);font-weight:700}
@@ -106,8 +119,8 @@ button{font:inherit;color:inherit}
 .book-closed .back-cover{display:flex}
 .closing .back-cover{display:flex;animation:closing-back .82s cubic-bezier(.48,.06,.22,1) both}
 @keyframes closing-back{0%{opacity:0;transform:translate(-50%,-50%) perspective(1200px) rotateY(165deg) scale(.82);filter:brightness(1.2)}68%{opacity:1;transform:translate(-50%,-50%) perspective(1200px) rotateY(-8deg) scale(1.015);filter:brightness(1.04)}100%{opacity:1;transform:translate(-50%,-50%) perspective(1200px) rotateY(0) scale(1);filter:brightness(1)}}
-.make-book{position:absolute;z-index:10;left:50%;top:calc(51% + min(34vh,285px) + 16px);transform:translateX(-50%) translateY(10px);border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;padding:13px 22px;font-family:var(--serif);font-size:14px;letter-spacing:.02em;box-shadow:0 8px 18px rgba(86,52,42,.2);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .35s ease,transform .35s ease,background .2s ease;white-space:nowrap}
-.make-book:hover{background:#9f332f}.book-closed .make-book{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.make-book{position:absolute;z-index:10;left:50%;top:calc(51% + min(34vh,285px) + 16px);transform:translateX(-50%) translateY(10px);border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:12px 22px 14px;font-family:var(--serif);font-size:14px;letter-spacing:.02em;box-shadow:0 8px 18px rgba(86,52,42,.2);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .35s ease,transform .35s ease,background .2s ease;white-space:nowrap}
+.make-book:hover{background:#9f332f}.book-closed .make-book{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);transition-delay:.6s,.6s,0s,0s}
 .manual{min-height:100svh;padding:clamp(54px,8vw,110px) clamp(20px,8vw,120px);display:grid;place-items:center;background:#fffaf0;background-image:radial-gradient(rgba(86,52,42,.065) .6px,transparent .75px);background-size:5px 5px;color:var(--brown)}
 .manual-inner{width:min(1100px,100%);display:grid;grid-template-columns:minmax(180px,.75fr) minmax(0,1.25fr);align-items:center;gap:clamp(32px,8vw,110px)}
 .manual-cookie{width:min(100%,310px);justify-self:center;filter:drop-shadow(0 15px 15px rgba(86,52,42,.18))}
@@ -124,8 +137,67 @@ button{font:inherit;color:inherit}
 .site-footer{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;position:relative;z-index:20;color:rgba(86,52,42,.55);font-size:9px;letter-spacing:.13em;text-transform:uppercase}
 @media(max-width:720px){
  .site{min-height:600px}.topbar{height:64px;flex-basis:64px;padding:0 16px}.brand-wordmark{width:110px;height:36px}.brand-tip{font-size:10px}.top-note{font-size:8px;letter-spacing:.08em}.scene{height:calc(100svh - 100px);min-height:500px}.book{width:94vw;height:67vh;min-height:390px;top:52%}.book-title{top:8%;font-size:18px}.book-title small{font-size:7px}.memory{width:clamp(50px,14vw,70px)}.memory figcaption{font-size:6px;padding:2px 3px}.cookie-wrap{width:130px;height:145px;top:52%}.cookie-button{width:94px;height:94px}.cookie-hint{font-size:9px}.sucking .memory{top:52%}.status{bottom:25px;font-size:11px}.replay{bottom:18px;right:14px;padding:8px 10px;font-size:9px}.site-footer{height:36px;flex-basis:36px;font-size:8px}
- .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover img{height:min(58vh,470px);max-width:72vw}.cover-open-right{width:min(40vw,144px)}.back-cover{height:min(58vh,470px);padding:25px 16px}.back-title{font-size:clamp(35px,11vw,48px)}.back-kicker,.back-edition{font-size:7px}.steam{top:calc(50% - min(29vh,230px) - 20px)}.make-book{top:calc(48% + min(29vh,230px) + 10px);bottom:auto;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
+ .reader{width:94vw;top:48%;aspect-ratio:1.52/1}.spread{border-radius:3px 5px 5px 3px}.spread img{width:50%;object-fit:cover}.reader-gutter{width:13px}.reader-count{bottom:-24px;font-size:9px}.cover-open-right{width:75%}.back-cover{height:min(58vh,470px);padding:25px 16px}.back-title{font-size:clamp(35px,11vw,48px)}.back-kicker,.back-edition{font-size:7px}.steam{top:calc(50% - min(29vh,230px) - 20px)}.make-book{top:calc(48% + min(29vh,230px) + 10px);bottom:auto;padding:12px 16px;font-size:13px}.manual{padding:58px 22px}.manual-inner{grid-template-columns:1fr;gap:18px}.manual-cookie{width:150px}.manual-copy{text-align:left}.manual h2{font-size:42px}.manual-intro{font-size:13px}.step{padding:13px 0}.step p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.flow{min-height:100svh;display:grid;place-items:center;padding:clamp(28px,5vh,56px) clamp(18px,5vw,72px);color:var(--brown);background-color:#fffaf0;background-image:radial-gradient(rgba(86,52,42,.065) .6px,transparent .75px);background-size:5px 5px}
+.flow-during{background-color:#fbeec6}
+.flow-inner{width:min(1180px,100%);display:flex;flex-direction:column;gap:clamp(14px,2.6vh,26px)}
+.ftabs{display:inline-flex;align-self:flex-start;border:1px solid rgba(86,52,42,.35);border-radius:999px;padding:3px;gap:2px;background:rgba(255,253,248,.6)}
+.ftabs button{border:0;background:transparent;border-radius:999px;padding:7px 16px;font-size:12px;cursor:pointer;color:var(--brown)}
+.ftabs button.on{background:var(--brown);color:#fff8e9}
+.ftabs button:not(.on):hover{background:rgba(86,52,42,.08)}
+.flow-kicker{margin:0 0 8px;font-size:12px;letter-spacing:.04em;color:var(--cherry)}
+.flow-head h2{margin:0;font-family:var(--serif);font-size:clamp(30px,4.6vw,56px);line-height:1.05;letter-spacing:-.045em;font-weight:700}
+.flow-sub{margin:10px 0 0;max-width:520px;font-size:14px;line-height:1.7;color:rgba(86,52,42,.78)}
+.fsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2.4vw,34px)}
+.fstep{position:relative;display:flex;flex-direction:column;align-items:flex-start}
+.fstep:not(:last-child)::after{content:"→";position:absolute;right:calc(clamp(14px,2.4vw,34px) / -2 - 9px);top:calc(50% + 40px);font-family:var(--serif);font-size:20px;color:rgba(86,52,42,.5)}
+.fnum{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brown);color:#fff8e9;font-family:var(--serif);font-size:13px}
+.fstep h3{margin:8px 0 4px;font-size:clamp(15px,1.5vw,18px);letter-spacing:-.02em}
+.fstep p{margin:0 0 12px;min-height:3.4em;font-size:12px;line-height:1.7;color:rgba(86,52,42,.78)}
+.fvis{width:100%;display:flex;justify-content:center;margin-top:auto}
+.fvis>img{display:block;width:auto;max-width:100%;height:min(38svh,360px);object-fit:contain;filter:drop-shadow(0 10px 14px rgba(86,52,42,.2))}
+.mp{position:relative;height:min(38svh,360px);aspect-ratio:296/578;max-width:100%;border:3px solid #34231c;border-radius:clamp(18px,2.2vw,28px);background:#faf3ea;overflow:hidden;box-shadow:0 10px 14px rgba(86,52,42,.2);text-align:left}
+.mp::before{content:"";position:absolute;z-index:2;top:7px;left:50%;width:32%;height:5%;transform:translateX(-50%);border-radius:99px;background:#1c1411}
+.mp-top{padding:17% 0 2%;text-align:center;font-size:clamp(8px,.9vw,10px);font-weight:700;color:var(--brown)}
+.mp-body{padding:3% 8% 8%;display:flex;flex-direction:column;gap:7px;font-size:clamp(8px,.85vw,10px);line-height:1.45}
+.mp-body.center{align-items:center;text-align:center}
+.mp-time{margin:0;font-size:.9em;color:rgba(86,52,42,.55);text-align:center}
+.note{background:#fff;border-radius:10px;padding:7px 9px;box-shadow:0 1px 3px rgba(86,52,42,.12)}
+.note b{display:block;font-size:.85em;color:var(--cherry);margin-bottom:2px}
+.note.dim{opacity:.55}
+.mp-h{margin:4px 0 2px;font-weight:700;font-size:1.1em}
+.rec{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:9px;box-shadow:0 1px 3px rgba(86,52,42,.12)}
+.rec.on{background:var(--brown);color:#fff8e9}
+.rl{font-weight:700;min-width:2.2em}
+.rt{color:rgba(86,52,42,.75)}
+.wave{display:flex;align-items:center;gap:2px;height:28px}
+.wave u{display:block;width:3px;border-radius:2px;background:#f5dfa1}
+.mp-cookie{width:46%;margin-top:6%;filter:drop-shadow(0 5px 5px rgba(86,52,42,.22))}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:4px}
+.chips span{border:1px solid rgba(86,52,42,.35);border-radius:99px;padding:3px 8px;font-size:.85em;letter-spacing:.06em;background:#fff}
+.mp-book{width:56%;margin-top:4%;border-radius:2px 4px 4px 2px;box-shadow:0 6px 10px rgba(86,52,42,.28)}
+.mp-sub{margin:0;color:rgba(86,52,42,.65)}
+.flow-actions{display:flex;gap:10px;flex-wrap:wrap}
+.fbtn{border:0;border-radius:3px;background:var(--cherry);color:#fff9e9;padding:12px 18px;font-family:var(--serif);font-size:14px;cursor:pointer;transition:background .2s ease}
+.fbtn:hover{background:#9f332f}
+.fbtn.ghost{background:transparent;color:var(--brown);border:1px solid rgba(86,52,42,.4)}
+.fbtn.ghost:hover{background:rgba(245,223,161,.5)}
+.ftabs button:focus-visible,.fbtn:focus-visible{outline:3px solid var(--cherry);outline-offset:3px}
+@media(max-width:860px){.fsteps{grid-template-columns:repeat(2,1fr);row-gap:28px}.fstep:not(:last-child)::after{display:none}.fvis>img,.mp{height:min(46svh,340px)}.fstep p{min-height:0}}
+
+.flow-proto{background-color:#f8ead7}
+.fsteps.five{grid-template-columns:repeat(5,1fr);gap:clamp(12px,1.8vw,26px)}
+.five .fstep p{min-height:6.9em}
+.five .fvis>img,.five .mp{height:min(30svh,290px)}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.pc{position:relative;aspect-ratio:1;border-radius:6px;background-size:cover;background-position:center;background-color:#e6d6c0;box-shadow:0 1px 3px rgba(86,52,42,.2)}
+.pc b{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;min-width:15px;height:15px;padding:0 3px;border-radius:99px;background:var(--brown);color:#fff8e9;font-size:8px;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.pact{display:flex;gap:5px;margin-top:3px}
+.pact span{flex:1;text-align:center;border:1px solid rgba(86,52,42,.3);border-radius:99px;padding:3px 0;font-size:.85em;background:#fff}
+.mp-bake{margin-top:auto;border-radius:6px;background:var(--cherry);color:#fff9e9;text-align:center;padding:7px 0;font-family:var(--serif);font-size:1em}
+@media(max-width:860px){.fsteps.five{grid-template-columns:repeat(2,1fr)}.five .fstep p{min-height:0}.five .fvis>img,.five .mp{height:min(46svh,340px)}}
 </style>
 </head>
 <body>
@@ -135,7 +207,7 @@ button{font:inherit;color:inherit}
       <img class="brand-wordmark" src="assets/cookiero-wordmark.png" alt="Cookie:Ro">
       <span class="brand-tip">tap the cookie</span>
     </button>
-    <div class="top-note">little memories, one trip</div>
+    <div class="top-note">every trip deserves a cookie</div>
   </header>
   <main class="scene" id="scene" aria-label="흩어진 여행 사진과 펼쳐진 포토북">
     <section class="book" aria-label="비어 있는 펼친 포토북">
@@ -156,8 +228,9 @@ button{font:inherit;color:inherit}
         <img id="rightPage" src="assets/spread-0-right.jpg" alt="Crumbook 펼친 면 오른쪽 페이지">
         <div class="reader-gutter"></div>
       </div>
-      <div class="leaf next" id="nextLeaf"><img class="front" src="assets/spread-0-right.jpg" alt=""><img class="back" src="assets/spread-1-left.jpg" alt=""></div>
-      <div class="leaf prev" id="prevLeaf"><img class="front" src="assets/spread-0-left.jpg" alt=""><img class="back" src="assets/spread-0-right.jpg" alt=""></div>
+      <div class="cast l" id="castL"></div><div class="cast r" id="castR"></div>
+      <div class="leaf next" id="nextLeaf"></div>
+      <div class="leaf prev" id="prevLeaf"></div>
       <button class="page-hit left" id="previousPage" type="button" aria-label="왼쪽 페이지로 넘기기" data-label="← previous"></button>
       <button class="page-hit right" id="nextPage" type="button" aria-label="오른쪽 페이지로 넘기기" data-label="next →"></button>
       <div class="reader-count" id="readerCount">01 / 04</div>
@@ -169,29 +242,49 @@ button{font:inherit;color:inherit}
       <div class="back-cover" id="backCover" aria-label="Crumbook 뒷표지">
         <span class="back-kicker">COOKIE:RO · LOS ANGELES</span>
         <strong class="back-title">your trip,<br><em>baked</em></strong>
-        <span class="back-edition">A LITTLE CRUMBOOK · 2026</span>
+        <span class="back-edition">LA CRUMBOOK · 2026</span>
       </div>
     </section>
     <button class="make-book" id="makeBook" type="button">bake my crumbook <span aria-hidden="true">→</span></button>
     <div class="status" id="status">all your little moments, together.</div>
     <button class="replay" id="replay" type="button">다시 흩어보기 ↺</button>
   </main>
-  <footer class="site-footer">a small bakery for your travel memories</footer>
+  <footer class="site-footer">travel crumbs</footer>
 </div>
-<section class="manual" id="manual" aria-labelledby="manualTitle">
-  <div class="manual-inner">
-    <img class="manual-cookie" src="assets/cookie-ring.png" alt="Cookie:Ro의 기본 쿠키">
-    <div class="manual-copy">
-      <div class="manual-kicker">Cookie:Ro · your trip, in crumbs</div>
-      <h2 id="manualTitle">A little guide<br>to your Crumbook</h2>
-      <p class="manual-intro">여행 사진을 한 권의 기록으로 바꾸는 Cookie:Ro의 기본 흐름이에요. 사진을 고르면, 그 안의 여행 이야기를 쿠키 레시피처럼 엮어 Crumbook으로 담아냅니다.</p>
-      <div class="steps">
-        <div class="step"><span class="step-num">01</span><div><strong>사진을 모아요</strong><p>여행 중 찍은 사진을 한곳에 모아 이번 여행의 재료를 준비해요.</p></div></div>
-        <div class="step"><span class="step-num">02</span><div><strong>여행의 결을 살펴요</strong><p>장소와 순간, 사진 사이의 흐름을 따라 여행의 분위기를 발견해요.</p></div></div>
-        <div class="step"><span class="step-num">03</span><div><strong>나만의 쿠키 레시피</strong><p>기본 쿠키에 여행의 기억을 차곡차곡 더해 나만의 Crumbook을 만들어요.</p></div></div>
-      </div>
-      <button class="manual-back" id="backToBook" type="button">포토북 다시 보기 ↑</button>
-    </div>
+<section class="flow flow-after" id="flowAfter" aria-labelledby="afterTitle">
+  <div class="flow-inner">
+    <nav class="ftabs" aria-label="서비스 흐름"><button type="button" data-go="flowAfter" class="on">여행 후</button><button type="button" data-go="flowDuring">여행 중</button><button type="button" data-go="protoCrumbook">운영 프로토콜</button></nav>
+    <header class="flow-head">
+      <p class="flow-kicker">여행 후 · Crumbook</p>
+      <h2 id="afterTitle">여행에서 남은 사진을 다시,<br>여행의 흐름으로.</h2>
+      <p class="flow-sub">날짜와 장소만 알려주면, 흩어진 사진이 Crumbook 한 권으로 정리돼요.</p>
+    </header>
+    <ol class="fsteps"><li class="fstep"><span class="fnum">1</span><h3>여행 날짜·장소 입력</h3><p>여행한 날짜와 장소를 입력하면 Crumbook이 여행 사진을 찾아요.</p><div class="fvis"><img src="assets/flow-after-1.png" alt="여행 날짜와 장소를 입력하는 화면"></div></li><li class="fstep"><span class="fnum">2</span><h3>여행사진 자동으로 모임</h3><p>여행에서 찍은 사진을 자동으로 찾아 한곳에 모아줘요.</p><div class="fvis"><img src="assets/flow-after-2.png" alt="여행 사진을 모으는 중인 화면"></div></li><li class="fstep"><span class="fnum">3</span><h3>시간·장소 순으로 정리</h3><p>사진이 촬영된 날짜와 장소를 바탕으로 여행의 흐름에 맞게 정리해요.</p><div class="fvis"><img src="assets/flow-after-3.png" alt="날짜와 장소별로 정리된 사진 화면"></div></li><li class="fstep"><span class="fnum">4</span><h3>완성된 Crumbook</h3><p>나만의 여행 앨범이 완성돼요. 사진을 확인하고, 원하는 대로 수정할 수 있어요.</p><div class="fvis"><img src="assets/flow-after-4.png" alt="완성된 Los Angeles Crumbook 화면"></div></li></ol>
+    <div class="flow-actions"><button class="fbtn ghost" type="button" data-go="site">포토북 다시 보기 ↑</button><button class="fbtn" type="button" data-go="flowDuring">여행 중에는 어떻게? ↓</button></div>
+  </div>
+</section>
+<section class="flow flow-during" id="flowDuring" aria-labelledby="duringTitle">
+  <div class="flow-inner">
+    <nav class="ftabs" aria-label="서비스 흐름"><button type="button" data-go="flowAfter">여행 후</button><button type="button" data-go="flowDuring" class="on">여행 중</button><button type="button" data-go="protoCrumbook">운영 프로토콜</button></nav>
+    <header class="flow-head">
+      <p class="flow-kicker">여행 중 · Travel Cookie</p>
+      <h2 id="duringTitle">여행하는 동안엔,<br>가볍게 남겨요.</h2>
+      <p class="flow-sub">사진만으로는 담기지 않는 기분을, 질문 하나로 붙잡아 두어요.</p>
+    </header>
+    <ol class="fsteps"><li class="fstep"><span class="fnum">1</span><h3>가볍게 물어봐요</h3><p>여행 중 맞춤 질문과 주기적인 알림이 지금의 기억을 꺼내줘요.</p><div class="fvis"><div class="mp"><div class="mp-top">Cookie:Ro</div><div class="mp-body"><p class="mp-time">오후 2:10</p><div class="note"><b>Cookie:Ro</b><span>지금 어디쯤이에요?<br>방금 본 풍경을 한 줄로 남겨볼까요?</span></div><div class="note"><b>Cookie:Ro</b><span>점심은 어땠어요?<br>맛을 들려주세요.</span></div><div class="note dim"><b>Cookie:Ro</b><span>오늘 가장 좋았던 순간은 언제였나요?</span></div></div></div></div></li><li class="fstep"><span class="fnum">2</span><h3>음성·글·영상으로 남겨요</h3><p>사진 옆에 그때의 목소리와 한 줄 메모, 짧은 영상을 함께 담아요.</p><div class="fvis"><div class="mp"><div class="mp-top">Cookie:Ro</div><div class="mp-body"><p class="mp-h">오늘의 기억</p><div class="rec on"><span class="rl">음성</span><em class="wave"><u style="height:8px"></u><u style="height:16px"></u><u style="height:10px"></u><u style="height:22px"></u><u style="height:14px"></u><u style="height:26px"></u><u style="height:12px"></u><u style="height:18px"></u><u style="height:9px"></u></em></div><div class="rec"><span class="rl">글</span><span class="rt">여기 노을이 진짜 예뻤다</span></div><div class="rec"><span class="rl">영상</span><span class="rt">0:12</span></div></div></div></div></li><li class="fstep"><span class="fnum">3</span><h3>기억이 쿠키 레시피가 돼요</h3><p>여행의 감정을 쿠키 맛과 레시피로 보여주는 Travel Cookie예요.</p><div class="fvis"><div class="mp"><div class="mp-top">Cookie:Ro</div><div class="mp-body center"><img class="mp-cookie" src="assets/cookie-ring.png" alt=""><p class="mp-h">오늘의 Travel Cookie</p><div class="chips"><span>BASE</span><span>CREAM</span><span>CUBE</span><span>TOPPING</span></div></div></div></div></li><li class="fstep"><span class="fnum">4</span><h3>Crumbook에 함께 담겨요</h3><p>여행이 끝나면 사진과 기억, 쿠키 레시피가 한 권의 Crumbook으로 이어져요.</p><div class="fvis"><div class="mp"><div class="mp-top">Cookie:Ro</div><div class="mp-body center"><img class="mp-book" src="assets/book-cover.jpg" alt="Crumbook 표지"><p class="mp-h">사진 · 기억 · 쿠키 레시피</p><p class="mp-sub">한 권으로 묶였어요</p></div></div></div></li></ol>
+    <div class="flow-actions"><button class="fbtn ghost" type="button" data-go="flowAfter">↑ 여행 후 보기</button><button class="fbtn ghost" type="button" data-go="site">포토북 다시 보기 ↑</button><button class="fbtn" type="button" data-go="protoCrumbook">운영 프로토콜 ↓</button></div>
+  </div>
+</section>
+<section class="flow flow-proto" id="protoCrumbook" aria-labelledby="protoTitle">
+  <div class="flow-inner">
+    <nav class="ftabs" aria-label="서비스 흐름"><button type="button" data-go="flowAfter">여행 후</button><button type="button" data-go="flowDuring">여행 중</button><button type="button" data-go="protoCrumbook" class="on">운영 프로토콜</button></nav>
+    <header class="flow-head">
+      <p class="flow-kicker">운영 프로토콜 01 · Crumbook</p>
+      <h2 id="protoTitle">Crumbook은<br>이렇게 만들어져요.</h2>
+      <p class="flow-sub">카메라롤에 남은 시간과 장소의 기록을 읽어서, 사진과 메모, 녹음을 한 편의 여행 이야기로 엮어요.</p>
+    </header>
+    <ol class="fsteps five"><li class="fstep"><span class="fnum">1</span><h3>날짜·장소 입력</h3><p>여행한 날짜와 장소를 입력하면, 정리할 범위가 정해져요.</p><div class="fvis"><img src="assets/flow-after-1.png" alt="여행 날짜와 장소 입력 화면"></div></li><li class="fstep"><span class="fnum">2</span><h3>카메라롤 읽기</h3><p>내 휴대폰 카메라롤에서 사진의 촬영 시간과 위치 정보를 읽어 여행 사진을 분류해요.</p><div class="fvis"><img src="assets/flow-after-2.png" alt="사진을 모으는 중인 화면"></div></li><li class="fstep"><span class="fnum">3</span><h3>날짜순·장소별 나열</h3><p>분류된 사진이 날짜순, 장소별로 쭉 정리돼요.</p><div class="fvis"><img src="assets/flow-after-3.png" alt="날짜와 장소별로 나열된 사진 화면"></div></li><li class="fstep"><span class="fnum">4</span><h3>대표 사진으로 묶기</h3><p>비슷한 사진은 대표 한 장만 두고, 오른쪽 위에 몇 장인지 숫자로 보여줘요. 삭제와 추가는 자유롭게 할 수 있어요.</p><div class="fvis"><div class="mp"><div class="mp-top">Santa Monica</div><div class="mp-body"><div class="pgrid"><div class="pc" style="background-image:url(assets/trip-05-palms.jpg)"><b>4</b></div><div class="pc" style="background-image:url(assets/trip-11-hollywood.jpg)"><b>3</b></div><div class="pc" style="background-image:url(assets/trip-08-griffith.jpg)"></div><div class="pc" style="background-image:url(assets/trip-09-walk-of-fame.jpg)"></div><div class="pc" style="background-image:url(assets/trip-03-smoothie.jpg)"><b>2</b></div><div class="pc" style="background-image:url(assets/trip-01-rodeo.jpg)"></div></div><div class="pact"><span>− 삭제</span><span>+ 추가</span></div><div class="mp-bake">bake my crumbook</div></div></div></div></li><li class="fstep"><span class="fnum">5</span><h3>bake my crumbook</h3><p>선택이 끝나면 눌러요. 메모와 녹음까지 시간·장소 정보를 읽어 하나의 이야기로 엮어줘요.</p><div class="fvis"><img src="assets/flow-after-4.png" alt="완성된 Crumbook 화면"></div></li></ol>
+    <div class="flow-actions"><button class="fbtn ghost" type="button" data-go="flowDuring">↑ 여행 중 보기</button><button class="fbtn ghost" type="button" data-go="site">포토북 다시 보기 ↑</button></div>
   </div>
 </section>
 <script>
@@ -225,14 +318,121 @@ function setSpread(index){pageIndex=index;document.getElementById('leftPage').sr
 function collect(){if(started||root.classList.contains('cover-ready'))return;started=true;clearTimeout(timer);root.classList.add('cookie-ready','sucking');setTimeout(()=>{root.classList.remove('sucking');root.classList.add('cover-ready');setSpread(0);},1350);}
 document.getElementById('cookieButton').addEventListener('click',collect);
 document.getElementById('brandButton').addEventListener('click',()=>{if(root.classList.contains('cover-ready')||root.classList.contains('opening')||root.classList.contains('reading')||root.classList.contains('book-closed'))reset();else if(root.classList.contains('cookie-ready'))collect();});
-function openBook(){if(turning||!root.classList.contains('cover-ready'))return;turning=true;root.classList.add('opening');setTimeout(()=>{root.classList.remove('opening','cover-ready');root.classList.add('reading');setSpread(0);turning=false;},820);}
-function turnPage(direction){if(turning||!root.classList.contains('reading'))return;if(direction==='forward'&&pageIndex===spreadCount-1){turning=true;root.classList.add('closing');setTimeout(()=>{root.classList.remove('reading','closing');root.classList.add('book-closed');turning=false;},820);return;}if(direction==='backward'&&pageIndex===0)return;turning=true;const oldIndex=pageIndex;const nextIndex=oldIndex+(direction==='forward'?1:-1);const leaf=document.querySelector(direction==='forward'?'.leaf.next':'.leaf.prev');leaf.querySelector('.front').src=`assets/spread-${oldIndex}-${direction==='forward'?'right':'left'}.jpg`;leaf.querySelector('.back').src=direction==='forward'?`assets/spread-${nextIndex}-left.jpg`:`assets/spread-${nextIndex}-right.jpg`;root.classList.add('turning',direction);void leaf.offsetWidth;setTimeout(()=>{setSpread(nextIndex);root.classList.remove('turning',direction);turning=false;},820);}
+const readerEl=document.getElementById('reader');
+function openBook(){
+  if(turning||!root.classList.contains('cover-ready'))return;
+  turning=true;readerEl.classList.add('half-right');root.classList.add('opening');
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const coverSrc='assets/book-cover.jpg', backSrc=spreadSrc(0,'left');
+  setTimeout(()=>{
+    Promise.all([loadImg(coverSrc),loadImg(backSrc),document.getElementById('leftPage').decode?document.getElementById('leftPage').decode().catch(()=>{}):0]).then(()=>{
+      nextLeaf.classList.add('cover-tex');
+      nextLeaf.style.setProperty('--front',`url("${coverSrc}")`);
+      nextLeaf.style.setProperty('--back',`url("${backSrc}")`);
+      root.classList.add('open-flip');
+      flip('forward',()=>{
+        root.classList.remove('opening','cover-ready','open-flip');root.classList.add('reading');
+        readerEl.classList.remove('half-right');nextLeaf.classList.remove('cover-tex');setSpread(0);turning=false;
+      },{noL:true});
+    });
+  },reduce?0:900);
+}
+const N=14, nextLeaf=document.getElementById('nextLeaf'), prevLeaf=document.getElementById('prevLeaf'), castL=document.getElementById('castL'), castR=document.getElementById('castR');
+function buildLeaf(el,dir){
+  el.style.setProperty('--n',N);
+  const strips=[]; let parent=el;
+  for(let i=0;i<N;i++){
+    const st=document.createElement('div'); st.className='strip';
+    const fi=dir==='next'?i:N-1-i, bi=dir==='next'?N-1-i:i;
+    const f=document.createElement('div'); f.className='face front'; f.style.setProperty('--fx',(fi/(N-1)*100)+'%');f.style.setProperty('--fxc',(fi/(N*0.912-1)*100)+'%');
+    const b=document.createElement('div'); b.className='face back'; b.style.setProperty('--bx',(bi/(N-1)*100)+'%');
+    st.append(f,b); parent.append(st); parent=st; strips.push(st);
+  }
+  return strips;
+}
+const nextStrips=buildLeaf(nextLeaf,'next'), prevStrips=buildLeaf(prevLeaf,'prev');
+const imgCache={};
+function loadImg(src){
+  if(!imgCache[src]){const im=new Image();im.decoding='async';im.src=src;imgCache[src]=im.decode?im.decode().catch(()=>{}).then(()=>im):new Promise(r=>{im.onload=im.onerror=()=>r(im)});imgCache[src].im=im;}
+  return imgCache[src];
+}
+const spreadSrc=(k,side)=>`assets/spread-${k}-${side}.jpg`;
+for(let k=0;k<spreadCount;k++)['left','right'].forEach(side=>loadImg(spreadSrc(k,side)));
+function flip(dir,done,o){o=o||{};
+  const fwd=dir==='forward', leaf=fwd?nextLeaf:prevLeaf, strips=fwd?nextStrips:prevStrips;
+  const sgn=fwd?-1:1, amp=3.4, reduce=matchMedia('(prefers-reduced-motion:reduce)').matches, dur=reduce?1:1050, t0=performance.now();
+  leaf.classList.add('active');
+  function frame(now){
+    const p=Math.min((now-t0)/dur,1), e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+    const base=sgn*180*e, d=-sgn*amp*Math.sin(2*Math.PI*e);
+    let a=0;
+    strips.forEach((st,i)=>{const r=i===0?base:d;a+=r;st.style.transform=`rotateY(${r}deg)`;st.style.setProperty('--sh',(.34*Math.abs(Math.sin(a*Math.PI/180))).toFixed(3));});
+    const cs=(.32*Math.sin(Math.PI*e)).toFixed(3);if(!o.noL)castL.style.opacity=cs;if(!o.noR)castR.style.opacity=cs;
+    if(p<1){requestAnimationFrame(frame);return;}
+    if(!o.keep){leaf.classList.remove('active');strips.forEach(st=>{st.style.transform='';st.style.removeProperty('--sh');});}castL.style.opacity=0;castR.style.opacity=0;done();
+  }
+  requestAnimationFrame(frame);
+}
+let backTex='';
+function makeBackTexture(){
+  if(backTex)return backTex;
+  const W=760,H=1000,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  const gr=g.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#fae8af');gr.addColorStop(.6,'#f5dfa1');gr.addColorStop(1,'#edd08a');g.fillStyle=gr;g.fillRect(0,0,W,H);
+  const sp=g.createLinearGradient(W,0,W-34,0);sp.addColorStop(0,'rgba(86,52,42,.16)');sp.addColorStop(1,'rgba(86,52,42,0)');g.fillStyle=sp;g.fillRect(W-34,0,34,H);
+  g.strokeStyle='rgba(86,52,42,.24)';g.lineWidth=2;g.strokeRect(26,26,W-52,H-52);
+  const draw=(t,y,font,ls,col)=>{g.font=font;g.fillStyle=col;g.textBaseline='alphabetic';const ch=[...t],ws=ch.map(x=>g.measureText(x).width);const tot=ws.reduce((a,b)=>a+b,0)+ls*(ch.length-1);let x=(W-tot)/2;ch.forEach((x1,k)=>{g.fillText(x1,x,y);x+=ws[k]+ls;});};
+  draw('COOKIE:RO · LOS ANGELES',104,'16px Arial, sans-serif',3.4,'rgba(86,52,42,.72)');
+  draw('your trip,',478,"700 112px Georgia,'Times New Roman',serif",-6,'#56342A');
+  draw('baked',580,"italic 400 112px Georgia,'Times New Roman',serif",-6,'#B63D39');
+  draw('LA CRUMBOOK · 2026',H-92,'16px Arial, sans-serif',3.4,'rgba(86,52,42,.72)');
+  backTex=c.toDataURL('image/jpeg',.92);return backTex;
+}
+function turnPage(direction){
+  if(turning||!root.classList.contains('reading'))return;
+  const fwd=direction==='forward';
+  if(fwd&&pageIndex===spreadCount-1){
+    turning=true;root.classList.add('closing');
+    const frontSrc=spreadSrc(pageIndex,'right');
+    loadImg(frontSrc).then(()=>{
+      nextLeaf.style.setProperty('--front',`url("${frontSrc}")`);
+      nextLeaf.style.setProperty('--back',`url("${makeBackTexture()}")`);
+      readerEl.classList.add('half-left');
+      flip('forward',()=>{root.classList.remove('reading','closing');root.classList.add('book-closed');turning=false;},{noR:true,keep:true});
+    });
+    return;
+  }
+  if(!fwd&&pageIndex===0)return;
+  turning=true;
+  const old=pageIndex,next=old+(fwd?1:-1),leaf=fwd?nextLeaf:prevLeaf;
+  const frontSrc=spreadSrc(old,fwd?'right':'left'), backSrc=spreadSrc(next,fwd?'left':'right'), underSrc=spreadSrc(next,fwd?'right':'left');
+  Promise.all([loadImg(frontSrc),loadImg(backSrc),loadImg(underSrc)]).then(()=>{
+    leaf.style.setProperty('--front',`url("${frontSrc}")`);
+    leaf.style.setProperty('--back',`url("${backSrc}")`);
+    const under=document.getElementById(fwd?'rightPage':'leftPage');
+    under.src=underSrc;
+    const go=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>flip(direction,()=>{setSpread(next);turning=false;})));
+    (under.decode?under.decode().catch(()=>{}):Promise.resolve()).then(go);
+  });
+}
+
 document.getElementById('nextPage').addEventListener('click',()=>turnPage('forward'));
 document.getElementById('previousPage').addEventListener('click',()=>turnPage('backward'));
 document.getElementById('coverOpen').addEventListener('click',openBook);
-document.getElementById('makeBook').addEventListener('click',()=>document.getElementById('manual').scrollIntoView({behavior:'smooth'}));
-document.getElementById('backToBook').addEventListener('click',()=>document.getElementById('site').scrollIntoView({behavior:'smooth'}));
-function reset(){started=false;pageIndex=0;turning=false;root.classList.remove('arranged','sucking','reading','cover-ready','opening','closing','book-closed','turning','forward','backward');root.classList.add('cookie-ready');setSpread(0);}
+const SCROLL_MS=1100; let scrollRaf=0;
+function smoothScrollTo(target,ms=SCROLL_MS){
+  const y1=Math.round(target.getBoundingClientRect().top+window.scrollY), y0=window.scrollY, dist=y1-y0;
+  cancelAnimationFrame(scrollRaf);
+  if(!dist)return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){window.scrollTo(0,y1);return;}
+  const t0=performance.now(), dur=ms*Math.min(1,.55+Math.abs(dist)/(innerHeight*1.6));
+  const stop=()=>{cancelAnimationFrame(scrollRaf);['wheel','touchstart','keydown'].forEach(e=>removeEventListener(e,stop));};
+  ['wheel','touchstart','keydown'].forEach(e=>addEventListener(e,stop,{passive:true}));
+  const step=now=>{const p=Math.min((now-t0)/dur,1),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;window.scrollTo(0,y0+dist*e);if(p<1)scrollRaf=requestAnimationFrame(step);else stop();};
+  scrollRaf=requestAnimationFrame(step);
+}
+document.getElementById('makeBook').addEventListener('click',()=>smoothScrollTo(document.getElementById('flowAfter')));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>smoothScrollTo(document.getElementById(b.dataset.go))));
+function reset(){started=false;pageIndex=0;turning=false;root.classList.remove('arranged','sucking','reading','cover-ready','opening','open-flip','closing','book-closed','turning','forward','backward');readerEl.classList.remove('half-left','half-right');[nextLeaf,prevLeaf].forEach(l=>l.classList.remove('active','cover-tex'));nextStrips.concat(prevStrips).forEach(st=>{st.style.transform='';st.style.removeProperty('--sh');});root.classList.add('cookie-ready');setSpread(0);}
 document.getElementById('replay').addEventListener('click',reset);
 timer=setTimeout(()=>root.classList.add('cookie-ready'),3000);
 </script>
